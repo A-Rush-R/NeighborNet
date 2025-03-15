@@ -39,11 +39,14 @@ https://pan.baidu.com/s/1sodKXth7GgHztkHp7tsN8A Code: 2345
   
   https://pan.baidu.com/s/1H0fLFzbFuibguq6y587OyQ Code: 1357
 
+## Self-Supervised Model
+- https://pan.quark.cn/s/9bc2db345141 Code:WEqP
 
+  mAP:59.6, mIoU:61.0, F1:60.4
 
 ## To Do
 1. Detailed comments
-2. Pretrained (Unsupervised Learning Mode) Weights
+2. ~~Pretrained (Unsupervised Learning Mode) Weights~~
 
 ## Quote
 
