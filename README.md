@@ -40,7 +40,7 @@ https://pan.baidu.com/s/1sodKXth7GgHztkHp7tsN8A Code: 2345
   https://pan.baidu.com/s/1H0fLFzbFuibguq6y587OyQ Code: 1357
 
 ## Self-Supervised Model
-- https://pan.quark.cn/s/1bbb4903bf80 Code:hJCS
+- https://1drv.ms/u/s!AqOZ5ofNuYmRczspgzSpviaBPO4?e=3hl1vr
 
   mAP:59.6, mIoU:61.0, F1:60.4
 
