@@ -27,12 +27,6 @@ If you are interested in the implementation details of generating this graph, pl
 https://pan.baidu.com/s/1sodKXth7GgHztkHp7tsN8A Code: 2345 
 
 ## Supervised Model
-- A better learning strategy may have better results. The following checkpoint is what I trained casually.
-- ~~Original model using the NeighborAttent and BasicReason modules.~~
-  
-  ~~mAP:64.1, mIoU:59.2, F1:57.3~~
-  
- ~~https://pan.baidu.com/s/1uK0VJ3A2qNte9bOZPcbSWg Code: 2345~~
 - An upgraded version of the original model using the MNeighborAttent and MBasicReason modules.
 
   mAP:72.2, mIoU:57.3, F1:54.0
