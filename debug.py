@@ -1,15 +1,9 @@
-# uses supervise_movienet.py in which they used loaddataset
-
-
-
-
-
 import torch
 import torch.optim as optim
 from torch.autograd import Variable
 from tqdm import tqdm
 
-from dataloader.supervise_movienet import load_data, load_transfer, load_data_abl
+from dataloader.supervise_movienet import load_data, load_transfer # , load_data_abl
 from model.NeighborNet import SLNet
 from loss import bce, sigmoid_focal
 from warm_up import warmup_decay_cosine
@@ -118,10 +112,14 @@ def main(
         model_path=None,
         save_path=None,
 ):
+
+    print("loading ...")
     trainload = load_data(sample_path, split_path, batch, topk=5)
     testload = load_data(sample_path, split_path, 512, mode='test', topk=5)
+    print("loaded ...")
     # trasferload = load_transfer(sample_path, 512)
 
+    print("creating model ...")
     model = SLNet(2048, embed_dim=1024, att_drop=0.1, topk=5, seg_sz=20, tnei=2, mode='fine')
     # frozen = ['embed_pos', 's1']
     re_inin = 'detect'
@@ -134,6 +132,7 @@ def main(
         # model.load_state_dict(new_weight, strict=False)
         model.load_state_dict(pretrain)
     model.cuda(gpu)
+    print("model created ...")
 
     if model_path is None:
         for para in model.parameters():
@@ -260,17 +259,19 @@ def trans_graph(graph, gpu):
 
 
 if __name__=='__main__':
-    
-   sample_path = r'/data/OpenDataLab___MovieNet/raw/dataset'
-   split_path = r'/data/OpenDataLab___MovieNet/raw/movie1K.split.v1.json'
-   save_path = r'/data/OpenDataLab___MovieNet/raw/modelsavepath'
+    data_path = r'/data/OpenDataLab___MovieNet/raw/dataset'
+    # data_path = r'G:\MovieNet\NeighborNet\vit_20\train_test'
+    # data_path = r'F:\OVSD\sample_20'
+    split_path = r'/data/OpenDataLab___MovieNet/raw/debug.movie1K.split.v1.json'
+    # split_path = r'G:\MovieNet\NeighborNet\similar_scn.pkl'
+    save_path = r'C:\ResearchProject\code\FBR\ShotLinker\model_zoo\open_supervise'
+    model_path = r'None'
 
     # ablation studies
 
-_ = main(sample_path, split_path, batch=512, epoch=10, save_path=save_path, model_path=None)
+    _ = main(data_path, split_path, batch=512, epoch=10, save_path=save_path, model_path=None)
     # with open(r'C:\ResearchProject\code\FBR\ShotLinker\Results\ours_wofc_result.pkl', 'wb') as f:
     #     pkl.dump(moviePL, f)
-
 
     # abl = [1280]
     # for i in range(len(abl)):

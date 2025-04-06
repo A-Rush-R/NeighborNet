@@ -252,9 +252,54 @@ def postprocess_soft(preds):
 # # ----------------- Prepare Work ----------------- # #
 
 
-def collectMovie(paths:list, preds:list, labels:list):
-    """
+# def collectMovie(paths:list, preds:list, labels:list):
+#     """
 
+#     :param paths: each element of the list is a tuple
+#     :param preds: each element of the list is ndarray
+#     :param labels: each element of the list is tensor
+#     :return:
+#         MoviePL: dict, each moviePL['xxx'] is a list,
+#                 where the list contains pred_nd, label_nd
+#         pred_nd: (n_shot)
+#         label_nd: same above
+#     """
+#     pathlist = []
+#     predlist = []
+#     labelist = []
+#     for pth, prd, lab in zip(paths, preds, labels):
+#         pthlist = [it for it in pth]
+#         pathlist.append(pthlist)
+#         predlist.append(prd)
+#         labelist.append(lab)
+
+#     moviePL = {}
+#     for pth_batch, prd_batch, lab_batch in zip(pathlist, predlist, labelist):
+#         for pth, prd, lab in zip(pth_batch, prd_batch, lab_batch):
+#             movie_id, shot_id = parse_path(pth)
+#             if movie_id not in moviePL.keys():
+#                 moviePL.update({movie_id: {shot_id: [prd, lab]}})
+#             else:
+#                 moviePL[movie_id].update({shot_id:[prd, lab]})
+
+#     for movie in moviePL.keys():
+#         PL = moviePL[movie]
+#         n_shot =len(PL.keys()) - 10
+#         pred_nd = np.zeros(n_shot)
+#         label_nd = np.zeros(n_shot)
+
+#         for i in PL.keys():
+#             if i >= 10:
+#                 j = i-10
+#                 pd, lb = PL[j]
+#                 pred_nd[j] = pd
+#                 label_nd[j] = lb
+
+#         moviePL[movie] = [pred_nd, label_nd]
+
+#     return moviePL
+def collectMovie(paths: list, preds: list, labels: list):
+    """
     :param paths: each element of the list is a tuple
     :param preds: each element of the list is ndarray
     :param labels: each element of the list is tensor
@@ -277,27 +322,80 @@ def collectMovie(paths:list, preds:list, labels:list):
     for pth_batch, prd_batch, lab_batch in zip(pathlist, predlist, labelist):
         for pth, prd, lab in zip(pth_batch, prd_batch, lab_batch):
             movie_id, shot_id = parse_path(pth)
-            if movie_id not in moviePL.keys():
-                moviePL.update({movie_id: {shot_id: [prd, lab]}})
-            else:
-                moviePL[movie_id].update({shot_id:[prd, lab]})
+            if movie_id not in moviePL:
+                moviePL[movie_id] = {}
+            moviePL[movie_id][shot_id] = [prd, lab]
 
     for movie in moviePL.keys():
         PL = moviePL[movie]
-        n_shot = len(PL.keys()) - 10
+        shot_ids = sorted(PL.keys())  # Sort shot IDs to ensure proper indexing
+        n_shot = max(0, len(shot_ids) - 10)  # Ensure non-negative size
         pred_nd = np.zeros(n_shot)
         label_nd = np.zeros(n_shot)
 
-        for i in PL.keys():
+        for i in shot_ids:
             if i >= 10:
-                j = i-10
-                pd, lb = PL[j]
-                pred_nd[j] = pd
-                label_nd[j] = lb
+                j = i - 10
+                if j < n_shot:  # Ensure j is within bounds
+                    pd, lb = PL.get(i, (0, 0))  # Use default values if key doesn't exist
+                    pred_nd[j] = pd
+                    label_nd[j] = lb
 
         moviePL[movie] = [pred_nd, label_nd]
 
     return moviePL
+
+# 
+# def collectMovie(paths: list, preds: list, labels: list):
+#     """
+#     :param paths: each element of the list is a tuple
+#     :param preds: each element of the list is ndarray
+#     :param labels: each element of the list is tensor
+#     :return:
+#         MoviePL: dict, each moviePL['xxx'] is a list,
+#                 where the list contains pred_nd, label_nd
+#         pred_nd: (n_shot)
+#         label_nd: same above
+#     """
+#     pathlist = []
+#     predlist = []
+#     labelist = []
+
+#     for pth, prd, lab in zip(paths, preds, labels):
+#         pthlist = [it for it in pth]
+#         pathlist.append(pthlist)
+#         predlist.append(prd)
+#         labelist.append(lab)
+
+#     moviePL = {}
+#     for pth_batch, prd_batch, lab_batch in zip(pathlist, predlist, labelist):
+#         for pth, prd, lab in zip(pth_batch, prd_batch, lab_batch):
+#             movie_id, shot_id = parse_path(pth)
+#             if movie_id not in moviePL.keys():
+#                 moviePL.update({movie_id: {shot_id: [prd, lab]}})
+#             else:
+#                 moviePL[movie_id].update({shot_id: [prd, lab]})
+
+#     for movie in moviePL.keys():
+#         PL = moviePL[movie]
+#         n_shot = len(PL.keys()) - 10
+#         pred_nd = np.zeros(n_shot)  
+#         label_nd = np.zeros(n_shot)
+
+#         for i in PL.keys():
+#             if i >= 10:
+#                 j = i - 10
+#                 if j < n_shot:  # Boundary check
+#                     pd, lb = PL[i]
+#                     pred_nd[j] = pd
+#                     label_nd[j] = lb
+#                 else:
+#                     print(f"Index {j} is out of bounds for n_shot of size {n_shot}")
+
+#         moviePL[movie] = [pred_nd, label_nd]
+
+#     return moviePL
+
 
 
 def parse_path(path:str):

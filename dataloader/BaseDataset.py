@@ -34,6 +34,7 @@ class BaseDataset(torch.utils.data.Dataset):
         if is_norm:
             simgh = self._norm_graph(simgh)
         return simgh
+    
 
     def _index_matric(self, links:list, n_top=5):
         T = len(links)
@@ -78,5 +79,4 @@ class BaseDataset(torch.utils.data.Dataset):
         adj_sum = np.sqrt(1/adj_sum)
         adj_norm = adj_sum[:, None] * adj_sum[None, :] * adj
         return adj_norm
-
 

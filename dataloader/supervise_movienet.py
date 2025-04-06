@@ -3,7 +3,9 @@ import torch
 import os
 import json as js
 import pickle as pkl
+# from BaseDataset import BaseDataset
 from dataloader.BaseDataset import BaseDataset
+# from BaseDataset import BaseDataset
 
 
 def read_pkl(path):
@@ -13,7 +15,7 @@ def read_pkl(path):
 
 
 class MovienetDataset(BaseDataset):
-    def __init__(self, samplelist:list, mode='train', topk=5):
+    def __init__(self, samplelist:list, mode='train', topk=1):
         super(MovienetDataset, self).__init__(samplelist)
         self.mode = mode
         self.topk = topk
@@ -27,7 +29,8 @@ class MovienetDataset(BaseDataset):
             label = 1
         sample = torch.from_numpy(sample)
         sample = sample.to(torch.float)
-        alink = data['hop'][0]
+        alink = data['hop']
+        
         hop = []
         inxs = []
         gh = self._build_graph(alink)
@@ -50,7 +53,7 @@ class MovienetDataset(BaseDataset):
             return self.samplist[ind], sample, hop, inxs, label
 
 
-def gen_dataSet(ft_path, lb_path, gph_path, seg_sz=20, dim=2048, save_path=None):
+def gen_dataSet(ft_path, lb_path, gph_path, save_path, seg_sz=20, dim=2048):
     feats = read_pkl(ft_path)
     mnames = gen_labelName(lb_path)
 
@@ -144,51 +147,7 @@ def write_pkl(path: str, data: dict):
         pkl.dump(data, f)
     return 1
 
-# class MovienetDataset_abl(BaseDataset):
-#     def __init__(self, samplelist:list, mode='train', inx_abl=0):
-#         super(MovienetDataset_abl, self).__init__(samplelist)
-#         self.mode = mode
-#         self.abl = inx_abl
-#
-#     def __getitem__(self, ind):
-#         data = self._read_pkl(self.samplist[ind])
-#         label = data['label']
-#
-#         if label != 1 and label !=0:
-#             if self.mode == 'train':
-#                 label = 1
-#             else:
-#                 label=0.5
-#         links = data['hop'][self.abl]
-#         half = len(links)//2
-#         sample = data['data']
-#         center = sample.shape[0]//2 - 1
-#         sample = sample[center-half+1:center+half+1]
-#         sample = torch.from_numpy(sample)
-#         sample = sample.to(torch.float)
-#         hop = []
-#         inxs = []
-#         gh = self._build_graph(links)
-#         inx_gh = self._index_matric(links, n_top=len(links[0]))
-#         rlink = self._gen_reason_link(links)
-#         rgh = self._build_graph(rlink)
-#         hop.append(gh[None])
-#         hop.append(rgh[None])
-#         inxs.append(inx_gh[None])
-#
-#         hop = np.concatenate(hop, axis=0)
-#         inxs = np.concatenate(inxs, axis=0)
-#         hop = torch.from_numpy(hop)
-#         inxs = torch.from_numpy(inxs).float()
-#         label = torch.from_numpy(np.array(label))
-#         label = label.to(torch.float)
-#         if self.mode == 'train':
-#             return sample, hop, inxs, label
-#         else:
-#             return self.samplist[ind], sample, hop, inxs, label
-
-
-def load_data(data_path, split_path, batch, mode='train', topk=5):
+def load_data(data_path, split_path, batch, mode='train', topk=1):
     with open(split_path, 'r') as f:
         data = js.load(f)
         trainSet = data['train'] + data['val']
@@ -243,9 +202,12 @@ def load_transfer(data_path, batch):
 
 
 if __name__=='__main__':
+    import os
     from tqdm import tqdm
+    
     # data_path = r'C:\ResearchProject\Feature\sample_20'
-    data_path = r'F:\OVSD\sample_20'
+    # data_path = r'F:\OVSD\sample_20'
+    data_path = r'/data/OpenDataLab___MovieNet/raw/dataset'
     files = os.listdir(data_path)
     samplist = [data_path+'/'+file for file in files]
     dataset = MovienetDataset(samplist)
@@ -259,4 +221,28 @@ if __name__=='__main__':
             print(label[is_r])
 
 
-
+# if __name__ == "__main__" : 
+#     from tqdm import tqdm
+    
+#    # Paths
+#     feature_path = "/data/OpenDataLab___MovieNet/raw/ImageNet_shot.pkl"
+#     label_path = "/data/manan/label318"
+#     graph_path = "/data/manan/gph_file"
+#     save_path = "/data/OpenDataLab___MovieNet/raw/dataset2"
+    
+#     # Generate dataset
+#     gen_dataSet(feature_path, label_path, graph_path, save_path)
+    
+#     # Load dataset
+#     batch_size = 256
+#     split_path = "/data/OpenDataLab___MovieNet/raw/movie1K.split.v1.json"
+#     train_loader = load_data(save_path, split_path, batch_size, mode='train')
+    
+#     for data in tqdm(train_loader):
+#         label = data[2].data.numpy()
+#         is_r = (label>=0) * (label<=1)
+#         is_r = np.bool_(1 -is_r)
+#         if is_r.sum()>0:
+#             print(label[is_r])
+    
+    
