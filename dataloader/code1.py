@@ -144,8 +144,8 @@ if __name__ == "__main__":
     # Paths
     feature_path = "/data/OpenDataLab___MovieNet/raw/ImageNet_shot.pkl"
     label_path = "/data/manan/label318"
-    graph_path = "/data/manan/gph_file"
-    save_path = "/data/OpenDataLab___MovieNet/raw/dataset2"
+    graph_path = "/data/manan/gph_folder/gph_file_k_1"
+    save_path = "/data/OpenDataLab___MovieNet/raw/gendataset/gendatasetk1"
     
     # Generate dataset
     generate_dataset(feature_path, label_path, graph_path, save_path)

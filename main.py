@@ -263,7 +263,7 @@ if __name__=='__main__':
     
    sample_path = r'/data/OpenDataLab___MovieNet/raw/dataset'
    split_path = r'/data/OpenDataLab___MovieNet/raw/movie1K.split.v1.json'
-   save_path = r'/data/OpenDataLab___MovieNet/raw/modelsavepath'
+   save_path = r'/data/OpenDataLab___MovieNet/raw/output_k_5'
 
     # ablation studies
 

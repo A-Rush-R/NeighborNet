@@ -115,9 +115,9 @@ def main(sample_path, split_path, batch=64, epochs=10, gpu=0, model_path=None, s
 # 📌 Example Usage
 # ==========================
 if __name__ == "__main__":
-    sample_path = r'/data/OpenDataLab___MovieNet/raw/dataset'
+    sample_path = r'/data/OpenDataLab___MovieNet/raw/gendatasetk2'
     split_path = r'/data/OpenDataLab___MovieNet/raw/movie1K.split.v1.json'
-    save_path = r'/data/manan/ouput'
+    save_path = r'/data/manan/ouput_k_2'
     model_path = None  # Set pre-trained model path if available
     
     main(sample_path, split_path, batch=512, epochs=10, save_path=save_path, model_path=model_path)
